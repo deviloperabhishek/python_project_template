@@ -1,0 +1,69 @@
+# Set your default template repo here so you don't have to type it every time
+#Include below code in your ~/.zshrc to start using these alias for python template project creation
+
+export DEFAULT_TEMPLATE_REPO="https://github.com"
+
+# Usage: mkapi <project-name> [optional-repo-url]
+mkapi() {
+    local name=$1
+    # Fallback to the global env variable if the second argument is missing
+    local repo_url=${2:-$DEFAULT_TEMPLATE_REPO}
+    
+    if [ -z "$name" ]; then 
+        echo "Error: Please provide a project name."
+        echo "Usage: mkapi <project-name> [optional-repo-url]"
+        return 1
+    fi
+    
+    echo "Cloning templates from: $repo_url"
+    git clone --depth 1 "$repo_url" "$name-tmp" || return 1
+    mv "$name-tmp/api-template" "$name"
+    rm -rf "$name-tmp"
+    
+    cd "$name" || return
+    rm -rf .git && git init
+    
+    local system_name="${name//-/_}"
+    mv "src/template_placeholder" "src/$system_name"
+    
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "s/template-placeholder/$name/g" pyproject.toml Dockerfile
+        sed -i '' "s/template_placeholder/$system_name/g" pyproject.toml Dockerfile src/$system_name/main.py
+    else
+        sed -i "s/template-placeholder/$name/g" pyproject.toml Dockerfile
+        sed -i "s/template_placeholder/$system_name/g" pyproject.toml Dockerfile src/$system_name/main.py
+    fi
+    echo "🎉 API project '$name' initialized successfully!"
+}
+
+# Usage: mklib <project-name> [optional-repo-url]
+mklib() {
+    local name=$1
+    local repo_url=${2:-$DEFAULT_TEMPLATE_REPO}
+    
+    if [ -z "$name" ]; then 
+        echo "Error: Please provide a project name."
+        echo "Usage: mklib <project-name> [optional-repo-url]"
+        return 1
+    fi
+    
+    echo "Cloning templates from: $repo_url"
+    git clone --depth 1 "$repo_url" "$name-tmp" || return 1
+    mv "$name-tmp/library-template" "$name"
+    rm -rf "$name-tmp"
+    
+    cd "$name" || return
+    rm -rf .git && git init
+    
+    local system_name="${name//-/_}"
+    mv "src/template_placeholder" "src/$system_name"
+    
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "s/template-placeholder/$name/g" pyproject.toml
+        sed -i '' "s/template_placeholder/$system_name/g" pyproject.toml src/$system_name/main.py
+    else
+        sed -i "s/template-placeholder/$name/g" pyproject.toml
+        sed -i "s/template_placeholder/$system_name/g" pyproject.toml src/$system_name/main.py
+    fi
+    echo "🎉 Library project '$name' initialized successfully!"
+}
