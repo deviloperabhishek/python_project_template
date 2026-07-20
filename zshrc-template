@@ -1,7 +1,7 @@
 # Set your default template repo here so you don't have to type it every time
 #Include below code in your ~/.zshrc to start using these alias for python template project creation
 
-export DEFAULT_TEMPLATE_REPO="https://github.com"
+export DEFAULT_TEMPLATE_REPO="https://github.com/deviloperabhishek/python_project_template.git"
 
 # Usage: mkapi <project-name> [optional-repo-url]
 mkapi() {
