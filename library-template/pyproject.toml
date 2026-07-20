@@ -24,3 +24,6 @@ template-placeholder-cli = "template_placeholder.main:cli"
 [tool.ruff]
 line-length = 88
 target-version = "py311"
+
+[tool.hatch.build.targets.wheel]
+    packages = ["src/template_placeholder"]
